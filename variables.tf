@@ -1,58 +1,6 @@
-# variable "name" {
-#   type        = string
-#   description = "The unique name for the batch account"
-# }
-
-variable "resource_group_name" {
-  type        = string
-  description = "Name of the resource group"
-}
-
 variable "location" {
   type        = string
   description = "The Azure region where the resource will be created"
-}
-
-variable "pool_allocation_mode" {
-  type        = string
-  description = "Specifies the mode to use for pool allocation"
-  default     = "BatchService"
-}
-
-variable "public_network_access_enabled" {
-  type        = bool
-  description = "Whether public network access is allowed for this server"
-  default     = true
-}
-
-variable "storage_account_id" {
-  type        = string
-  description = "Specifies the storage account to use for the Batch account"
-}
-
-variable "storage_account_authentication_mode" {
-  type        = string
-  description = "Specifies the storage account authentication mode"
-  default     = "StorageKeys"
-}
-
-
-variable "tags" {
-  type        = map(string)
-  description = "A mapping of tags to assign to the resource."
-  default     = {}
-}
-
-variable "identity" {
-  type        = list(map(any))
-  description = "Managed Service Identity that should be configured on this Batch Account."
-  default     = []
-}
-
-variable "network_profile" {
-  type = list(map(any))
-  description = "Network profile settings for account and node management access."
-  default     = []
 }
 
 variable "name" {
@@ -65,6 +13,15 @@ variable "name" {
   }
 }
 
+variable "resource_group_name" {
+  type        = string
+  description = "Name of the resource group"
+}
+
+variable "storage_account_id" {
+  type        = string
+  description = "Specifies the storage account to use for the Batch account"
+}
 
 # required AVM interfaces
 # remove only if not supported by the resource
@@ -135,11 +92,11 @@ If it is set to false, then no telemetry will be collected.
 DESCRIPTION
 }
 
-# variable "location" {
-#   type        = string
-#   nullable    = false
-#   description = "Azure region where the resource should be deployed."
-# }
+variable "identity" {
+  type        = list(map(any))
+  default     = []
+  description = "Managed Service Identity that should be configured on this Batch Account."
+}
 
 variable "lock" {
   type = object({
@@ -164,6 +121,18 @@ variable "managed_identities" {
   })
   default     = {}
   description = "Managed identities to be created for the resource."
+}
+
+variable "network_profile" {
+  type        = list(map(any))
+  default     = []
+  description = "Network profile settings for account and node management access."
+}
+
+variable "pool_allocation_mode" {
+  type        = string
+  default     = "BatchService"
+  description = "Specifies the mode to use for pool allocation"
 }
 
 variable "private_endpoints" {
@@ -218,6 +187,12 @@ A map of private endpoints to create on this resource. The map key is deliberate
 DESCRIPTION
 }
 
+variable "public_network_access_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether public network access is allowed for this server"
+}
+
 variable "role_assignments" {
   type = map(object({
     role_definition_id_or_name             = string
@@ -243,4 +218,14 @@ A map of role assignments to create on this resource. The map key is deliberatel
 DESCRIPTION
 }
 
-# tflint-ignore: terraform_unused_declarations
+variable "storage_account_authentication_mode" {
+  type        = string
+  default     = "StorageKeys"
+  description = "Specifies the storage account authentication mode"
+}
+
+variable "tags" {
+  type        = map(string)
+  default     = {}
+  description = "A mapping of tags to assign to the resource."
+}

@@ -1,7 +1,16 @@
 <!-- BEGIN_TF_DOCS -->
-# terraform-azurerm-avm-res-batch-batchaccount
+# terraform-azurerm-avm-template
 
-This module deploys batch accounts
+This is a template repo for Terraform Azure Verified Modules.
+
+Things to do:
+
+1. Set up a GitHub repo environment called `test`.
+1. Configure environment protection rule to ensure that approval is required before deploying to this environment.
+1. Create a user-assigned managed identity in your test subscription.
+1. Create a role assignment for the managed identity on your test subscription, use the minimum required role.
+1. Configure federated identity credentials on the user assigned managed identity. Use the GitHub environment.
+1. Search and update TODOs within the code and remove the TODO comments once complete.
 
 > [!IMPORTANT]
 > As the overall AVM framework is not GA (generally available) yet - the CI framework and test automation is not fully functional and implemented across all supported languages yet - breaking changes are expected, and additional customer feedback is yet to be gathered and incorporated. Hence, modules **MUST NOT** be published at version `1.0.0` or higher at this time.
@@ -13,28 +22,21 @@ This module deploys batch accounts
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
-The following requirements are needed by this module:
-
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.5.0)
-
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 1.9.0, < 2.0)
-
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0, < 4.0)
-
-- <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0, < 4.0)
+No requirements.
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.71.0, < 4.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm)
 
-- <a name="provider_random"></a> [random](#provider\_random) (>= 3.5.0, < 4.0)
+- <a name="provider_random"></a> [random](#provider\_random)
 
 ## Resources
 
 The following resources are used by this module:
 
+- [azurerm_batch_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/batch_account) (resource)
 - [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
 - [azurerm_private_endpoint_application_security_group_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint_application_security_group_association) (resource)
@@ -42,22 +44,33 @@ The following resources are used by this module:
 - [azurerm_resource_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
-- [azurerm_resource_group.parent](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
 The following input variables are required:
 
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region where the resource will be created
+
+Type: `string`
+
 ### <a name="input_name"></a> [name](#input\_name)
 
-Description: The name of the this resource.
+Description: The name of this resource.
 
 Type: `string`
 
 ### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
 
-Description: The resource group where the resources will be deployed.
+Description: Name of the resource group
+
+Type: `string`
+
+### <a name="input_storage_account_id"></a> [storage\_account\_id](#input\_storage\_account\_id)
+
+Description: Specifies the storage account to use for the Batch account
 
 Type: `string`
 
@@ -126,13 +139,13 @@ Type: `bool`
 
 Default: `true`
 
-### <a name="input_location"></a> [location](#input\_location)
+### <a name="input_identity"></a> [identity](#input\_identity)
 
-Description: Azure region where the resource should be deployed.  If null, the location will be inferred from the resource group location.
+Description: Managed Service Identity that should be configured on this Batch Account.
 
-Type: `string`
+Type: `list(map(any))`
 
-Default: `null`
+Default: `[]`
 
 ### <a name="input_lock"></a> [lock](#input\_lock)
 
@@ -163,6 +176,22 @@ object({
 ```
 
 Default: `{}`
+
+### <a name="input_network_profile"></a> [network\_profile](#input\_network\_profile)
+
+Description: Network profile settings for account and node management access.
+
+Type: `list(map(any))`
+
+Default: `[]`
+
+### <a name="input_pool_allocation_mode"></a> [pool\_allocation\_mode](#input\_pool\_allocation\_mode)
+
+Description: Specifies the mode to use for pool allocation
+
+Type: `string`
+
+Default: `"BatchService"`
 
 ### <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints)
 
@@ -220,6 +249,14 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_public_network_access_enabled"></a> [public\_network\_access\_enabled](#input\_public\_network\_access\_enabled)
+
+Description: Whether public network access is allowed for this server
+
+Type: `bool`
+
+Default: `true`
+
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
 Description: A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
@@ -249,11 +286,19 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_storage_account_authentication_mode"></a> [storage\_account\_authentication\_mode](#input\_storage\_account\_authentication\_mode)
+
+Description: Specifies the storage account authentication mode
+
+Type: `string`
+
+Default: `"StorageKeys"`
+
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
-Description: The map of tags to be applied to the resource
+Description: A mapping of tags to assign to the resource.
 
-Type: `map(any)`
+Type: `map(string)`
 
 Default: `{}`
 
