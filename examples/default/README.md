@@ -5,7 +5,7 @@ This example shows how to deploy the module in its simplest configuration.
 
 ```hcl
 terraform {
-  required_version = "~> 1.8"
+  required_version = "~> 1.7"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -19,7 +19,11 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 
@@ -88,7 +92,7 @@ module "azure_batch_account" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.7)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.100)
 
