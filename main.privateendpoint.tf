@@ -2,7 +2,7 @@
 resource "azurerm_private_endpoint" "this" {
   for_each = var.private_endpoints
 
-  location                      = coalesce(each.value.location, var.location, local.resource_group_location)
+  location                      = coalesce(each.value.location, var.location,)
   name                          = each.value.name != null ? each.value.name : "pe-${var.name}"
   resource_group_name           = each.value.resource_group_name != null ? each.value.resource_group_name : var.resource_group_name
   subnet_id                     = each.value.subnet_resource_id
@@ -21,8 +21,8 @@ resource "azurerm_private_endpoint" "this" {
     content {
       name               = ip_configuration.value.name
       private_ip_address = ip_configuration.value.private_ip_address
-      member_name        = "TODO subresource name"
-      subresource_name   = "TODO subresource name"
+      member_name        = "sites"
+      subresource_name   = "sites"
     }
   }
   dynamic "private_dns_zone_group" {

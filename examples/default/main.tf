@@ -1,9 +1,9 @@
 terraform {
-  required_version = "~> 1.3"
+  required_version = "~> 1.8"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.74"
+      version = "~> 3.99"
     }
     random = {
       source  = "hashicorp/random"
@@ -21,7 +21,7 @@ provider "azurerm" {
 # This allows us to randomize the region for the resource group.
 module "regions" {
   source  = "Azure/regions/azurerm"
-  version = "~> 0.3"
+  version = "~> 0.4"
 }
 
 # This allows us to randomize the region for the resource group.
@@ -43,17 +43,35 @@ resource "azurerm_resource_group" "this" {
   name     = module.naming.resource_group.name_unique
 }
 
+module "avm_res_storage_storageaccount" {
+  source  = "Azure/avm-res-storage-storageaccount/azurerm"
+  version = "0.1.1"
+
+  enable_telemetry              = var.enable_telemetry
+  name                          = module.naming.storage_account.name_unique
+  resource_group_name           = azurerm_resource_group.this.name
+  shared_access_key_enabled     = true
+  public_network_access_enabled = true
+  network_rules = {
+    bypass         = ["AzureServices"]
+    default_action = "Allow"
+  }
+}
+
 # This is the module call
 # Do not specify location here due to the randomization above.
 # Leaving location as `null` will cause the module to use the resource group location
 # with a data source.
-module "test" {
-  source = "../../"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  # ...
-  location            = azurerm_resource_group.this.location
-  name                = "TODO" # TODO update with module.naming.<RESOURCE_TYPE>.name_unique
-  resource_group_name = azurerm_resource_group.this.name
-
-  enable_telemetry = var.enable_telemetry # see variables.tf
+# Assuming the module is two levels up in the directory structure
+module "azure_batch_account" {
+  source = "../.."
+  # source             = "Azure/avm-res-res-batch-batchaccount/azurerm"
+  # version            = "0.1.0"
+  name                                = module.naming.batch_account.name_unique
+  resource_group_name                 = azurerm_resource_group.this.name
+  location                            = azurerm_resource_group.this.location
+  pool_allocation_mode                = "BatchService"
+  public_network_access_enabled       = true
+  storage_account_id                  = module.avm_res_storage_storageaccount.id
+  storage_account_authentication_mode = "StorageKeys"  # or "BatchAccountManagedIdentity"
 }

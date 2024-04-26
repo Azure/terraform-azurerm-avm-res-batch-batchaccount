@@ -1,20 +1,70 @@
+# variable "name" {
+#   type        = string
+#   description = "The unique name for the batch account"
+# }
+
+variable "resource_group_name" {
+  type        = string
+  description = "Name of the resource group"
+}
+
+variable "location" {
+  type        = string
+  description = "The Azure region where the resource will be created"
+}
+
+variable "pool_allocation_mode" {
+  type        = string
+  description = "Specifies the mode to use for pool allocation"
+  default     = "BatchService"
+}
+
+variable "public_network_access_enabled" {
+  type        = bool
+  description = "Whether public network access is allowed for this server"
+  default     = true
+}
+
+variable "storage_account_id" {
+  type        = string
+  description = "Specifies the storage account to use for the Batch account"
+}
+
+variable "storage_account_authentication_mode" {
+  type        = string
+  description = "Specifies the storage account authentication mode"
+  default     = "StorageKeys"
+}
+
+
+variable "tags" {
+  type        = map(string)
+  description = "A mapping of tags to assign to the resource."
+  default     = {}
+}
+
+variable "identity" {
+  type        = list(map(any))
+  description = "Managed Service Identity that should be configured on this Batch Account."
+  default     = []
+}
+
+variable "network_profile" {
+  type = list(map(any))
+  description = "Network profile settings for account and node management access."
+  default     = []
+}
+
 variable "name" {
   type        = string
-  description = "The name of the this resource."
+  description = "The name of this resource."
 
   validation {
-    condition     = can(regex("TODO", var.name))
-    error_message = "The name must be TODO." # TODO remove the example below once complete:
-    #condition     = can(regex("^[a-z0-9]{5,50}$", var.name))
-    #error_message = "The name must be between 5 and 50 characters long and can only contain lowercase letters and numbers."
+    condition     = can(regex("^[a-z0-9]{5,50}$", var.name))
+    error_message = "The name must be between 5 and 50 characters long and can only contain lowercase letters and numbers."
   }
 }
 
-# This is required for most resource modules
-variable "resource_group_name" {
-  type        = string
-  description = "The resource group where the resources will be deployed."
-}
 
 # required AVM interfaces
 # remove only if not supported by the resource
@@ -85,11 +135,11 @@ If it is set to false, then no telemetry will be collected.
 DESCRIPTION
 }
 
-variable "location" {
-  type        = string
-  nullable    = false
-  description = "Azure region where the resource should be deployed."
-}
+# variable "location" {
+#   type        = string
+#   nullable    = false
+#   description = "Azure region where the resource should be deployed."
+# }
 
 variable "lock" {
   type = object({
@@ -194,8 +244,3 @@ DESCRIPTION
 }
 
 # tflint-ignore: terraform_unused_declarations
-variable "tags" {
-  type        = map(any)
-  default     = {}
-  description = "The map of tags to be applied to the resource"
-}
