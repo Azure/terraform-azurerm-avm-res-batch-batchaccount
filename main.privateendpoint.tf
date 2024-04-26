@@ -1,4 +1,4 @@
-# TODO remove this code & var.private_endpoints if private link is not support.  Note it must be included in this module if it is supported.
+
 resource "azurerm_private_endpoint" "this" {
   for_each = var.private_endpoints
 
@@ -12,8 +12,8 @@ resource "azurerm_private_endpoint" "this" {
   private_service_connection {
     is_manual_connection           = false
     name                           = each.value.private_service_connection_name != null ? each.value.private_service_connection_name : "pse-${var.name}"
-    private_connection_resource_id = azurerm_resource_group.TODO.id # TODO: Replace this dummy resource azurerm_resource_group.TODO with your module resource
-    subresource_names              = ["TODO subresource name, see https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-link-resource"]
+    private_connection_resource_id = azurerm_batch_account.this.id
+    subresource_names              = ["batchAccount", "nodeManagement"]
   }
   dynamic "ip_configuration" {
     for_each = each.value.ip_configurations
