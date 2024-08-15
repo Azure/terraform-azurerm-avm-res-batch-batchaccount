@@ -9,6 +9,9 @@ terraform {
       source  = "hashicorp/random"
       version = ">= 3.5.0, < 4.0.0"
     }
-    # Add any other required providers here
+    modtm = {
+      source  = "Azure/modtm"
+      version = "~> 0.3"
+    }
   }
 }
