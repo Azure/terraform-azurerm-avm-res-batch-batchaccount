@@ -60,7 +60,9 @@ module "avm_res_storage_storageaccount" {
     bypass         = ["AzureServices"]
     default_action = "Allow"
   }
+  account_replication_type = "Standard_LRS"
 }
+
 
 # This is the module call
 # Do not specify location here due to the randomization above.
