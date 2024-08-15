@@ -9,3 +9,8 @@ output "resource" {
   description = "This is the full output for the resource."
   value       = azurerm_batch_account.this
 }
+
+output "batch_account_id" {
+  value = azurerm_batch_account.this.id
+  description = "The ID of the Batch account created."
+}

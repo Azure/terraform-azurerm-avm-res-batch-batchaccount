@@ -1,7 +1,9 @@
 variable "location" {
   type        = string
-  description = "The Azure region where the resource will be created"
+  description = "Specifies the Azure location where the resource exists."
+  nullable    = false
 }
+
 
 variable "name" {
   type        = string
