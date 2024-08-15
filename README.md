@@ -53,7 +53,7 @@ The following input variables are required:
 
 ### <a name="input_location"></a> [location](#input\_location)
 
-Description: The Azure region where the resource will be created
+Description: Specifies the Azure location where the resource exists.
 
 Type: `string`
 
@@ -292,6 +292,10 @@ Default: `null`
 ## Outputs
 
 The following outputs are exported:
+
+### <a name="output_batch_account_id"></a> [batch\_account\_id](#output\_batch\_account\_id)
+
+Description: The ID of the Batch account created.
 
 ### <a name="output_private_endpoints"></a> [private\_endpoints](#output\_private\_endpoints)
 
