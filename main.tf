@@ -21,6 +21,7 @@ resource "azurerm_role_assignment" "this" {
   skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
 }
 
+# Azure Batch Account Resource
 resource "azurerm_batch_account" "this" {
   location                            = var.location
   name                                = var.name
@@ -30,23 +31,5 @@ resource "azurerm_batch_account" "this" {
   storage_account_authentication_mode = var.storage_account_authentication_mode
   storage_account_id                  = var.storage_account_id
   tags                                = var.tags
-
-  dynamic "identity" {
-    for_each = var.identity
-    content {
-      type         = identity.value.type
-      identity_ids = identity.value.identity_ids
-    }
-  }
-  dynamic "network_profile" {
-    for_each = var.network_profile
-    content {
-      account_access {
-        default_action = network_profile.value.account_access_default_action
-      }
-      node_management_access {
-        default_action = network_profile.value.node_management_access_default_action
-      }
-    }
-  }
 }
+
