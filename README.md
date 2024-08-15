@@ -24,7 +24,7 @@ Things to do:
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9.3)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.108)
 
@@ -38,7 +38,8 @@ The following resources are used by this module:
 
 - [azurerm_batch_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/batch_account) (resource)
 - [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
-- [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
+- [azurerm_private_endpoint.this_managed_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
+- [azurerm_private_endpoint.this_unmanaged_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
 - [azurerm_private_endpoint_application_security_group_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint_application_security_group_association) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/Azure/modtm/latest/docs/resources/telemetry) (resource)
@@ -78,40 +79,6 @@ Type: `string`
 ## Optional Inputs
 
 The following input variables are optional (have default values):
-
-### <a name="input_diagnostic_settings"></a> [diagnostic\_settings](#input\_diagnostic\_settings)
-
-Description: A map of diagnostic settings to create on the Key Vault. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-
-- `name` - (Optional) The name of the diagnostic setting. One will be generated if not set, however this will not be unique if you want to create multiple diagnostic setting resources.
-- `log_categories` - (Optional) A set of log categories to send to the log analytics workspace. Defaults to `[]`.
-- `log_groups` - (Optional) A set of log groups to send to the log analytics workspace. Defaults to `["allLogs"]`.
-- `metric_categories` - (Optional) A set of metric categories to send to the log analytics workspace. Defaults to `["AllMetrics"]`.
-- `log_analytics_destination_type` - (Optional) The destination type for the diagnostic setting. Possible values are `Dedicated` and `AzureDiagnostics`. Defaults to `Dedicated`.
-- `workspace_resource_id` - (Optional) The resource ID of the log analytics workspace to send logs and metrics to.
-- `storage_account_resource_id` - (Optional) The resource ID of the storage account to send logs and metrics to.
-- `event_hub_authorization_rule_resource_id` - (Optional) The resource ID of the event hub authorization rule to send logs and metrics to.
-- `event_hub_name` - (Optional) The name of the event hub. If none is specified, the default event hub will be selected.
-- `marketplace_partner_resource_id` - (Optional) The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic LogsLogs.
-
-Type:
-
-```hcl
-map(object({
-    name                                     = optional(string, null)
-    log_categories                           = optional(set(string), [])
-    log_groups                               = optional(set(string), ["allLogs"])
-    metric_categories                        = optional(set(string), ["AllMetrics"])
-    log_analytics_destination_type           = optional(string, "Dedicated")
-    workspace_resource_id                    = optional(string, null)
-    storage_account_resource_id              = optional(string, null)
-    event_hub_authorization_rule_resource_id = optional(string, null)
-    event_hub_name                           = optional(string, null)
-    marketplace_partner_resource_id          = optional(string, null)
-  }))
-```
-
-Default: `{}`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
@@ -317,10 +284,6 @@ Default: `null`
 
 The following outputs are exported:
 
-### <a name="output_private_endpoints"></a> [private\_endpoints](#output\_private\_endpoints)
-
-Description: A map of private endpoints. The map key is the supplied input to var.private\_endpoints. The map value is the entire azurerm\_private\_endpoint resource.
-
 ### <a name="output_resource"></a> [resource](#output\_resource)
 
 Description: This is the full output for the resource.
@@ -328,6 +291,10 @@ Description: This is the full output for the resource.
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The ID of the Batch account created.
+
+### <a name="output_resource_private_endpoints"></a> [resource\_private\_endpoints](#output\_resource\_private\_endpoints)
+
+Description: A map of private endpoints. The map key is the supplied input to var.private\_endpoints. The map value is the entire azurerm\_private\_endpoint resource.
 
 ## Modules
 
