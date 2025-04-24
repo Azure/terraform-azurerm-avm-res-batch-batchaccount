@@ -25,7 +25,7 @@ This Terraform module is designed to create and manage Azure Batch Accounts and 
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9.3)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11.4)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.108)
 
