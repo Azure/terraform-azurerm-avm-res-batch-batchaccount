@@ -34,6 +34,7 @@ resource "azurerm_batch_account" "this" {
 
   dynamic "identity" {
     for_each = var.identity
+
     content {
       type         = identity.value.type
       identity_ids = identity.value.identity_ids
@@ -41,6 +42,7 @@ resource "azurerm_batch_account" "this" {
   }
   dynamic "network_profile" {
     for_each = var.network_profile
+
     content {
       account_access {
         default_action = network_profile.value.account_access_default_action
