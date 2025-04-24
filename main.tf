@@ -30,7 +30,7 @@ resource "azurerm_batch_account" "this" {
   public_network_access_enabled       = var.public_network_access_enabled
   storage_account_authentication_mode = var.storage_account_authentication_mode
   storage_account_id                  = var.storage_account_id
-  tags                                = var.tags
+  tags                                = var.tags != null ? var.tags : {}
 
   dynamic "identity" {
     for_each = var.identity
