@@ -54,6 +54,7 @@ module "avm_res_storage_storageaccount" {
   enable_telemetry              = var.enable_telemetry
   name                          = module.naming.storage_account.name_unique
   resource_group_name           = azurerm_resource_group.this.name
+  location                      = azurerm_resource_group.this.location
   shared_access_key_enabled     = true
   public_network_access_enabled = true
   network_rules = {
