@@ -36,10 +36,10 @@ resource "azurerm_batch_account" "this" {
 
   # Dynamic block for encryption
   dynamic "encryption" {
-    for_each = var.encryption != null ? [var.encryption] : []
+    for_each = var.encryption != null ? [var.encryption] : [{ key_vault_key_id = null }]
 
     content {
-      key_vault_key_id = encryption.value.key_vault_key_id
+      key_vault_key_id = encryption.value.key_vault_key_id != null ? encryption.value.key_vault_key_id : null
     }
   }
   # Dynamic block for identity

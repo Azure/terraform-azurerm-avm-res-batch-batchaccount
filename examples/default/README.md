@@ -64,8 +64,10 @@ module "avm_res_storage_storageaccount" {
   shared_access_key_enabled     = true
   public_network_access_enabled = true
   network_rules = {
-    bypass         = ["AzureServices"]
-    default_action = "Allow"
+    bypass                     = ["AzureServices"]
+    default_action             = "Allow"
+    ip_rules                   = []
+    virtual_network_subnet_ids = []
   }
   account_replication_type = "ZRS"
   tags = {
