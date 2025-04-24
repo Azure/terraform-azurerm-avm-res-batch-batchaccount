@@ -5,11 +5,11 @@ This deploys the module in its simplest form.
 
 ```hcl
 terraform {
-  required_version = "~> 1.11.4" // Update this if needed
+  required_version = "~> 1.11.4"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+      version = ">= 3.74.0, < 4.0.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -96,7 +96,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11.4)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.74.0, < 4.0.0)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
