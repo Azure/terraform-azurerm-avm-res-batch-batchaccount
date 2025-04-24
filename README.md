@@ -81,6 +81,14 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
+### <a name="input_allowed_authentication_modes"></a> [allowed\_authentication\_modes](#input\_allowed\_authentication\_modes)
+
+Description: Specifies the allowed authentication mode for the Batch account. Possible values include AAD, SharedKey or TaskAuthenticationToken.
+
+Type: `list(string)`
+
+Default: `null`
+
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
 Description: This variable controls whether or not telemetry is enabled for the module.  
@@ -91,6 +99,20 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_encryption"></a> [encryption](#input\_encryption)
+
+Description: Specifies if customer managed key encryption should be used to encrypt batch account data.
+
+Type:
+
+```hcl
+object({
+    key_vault_key_id = string
+  })
+```
+
+Default: `null`
+
 ### <a name="input_identity"></a> [identity](#input\_identity)
 
 Description: Managed Service Identity that should be configured on this Batch Account.
@@ -98,6 +120,24 @@ Description: Managed Service Identity that should be configured on this Batch Ac
 Type: `list(map(any))`
 
 Default: `[]`
+
+### <a name="input_key_vault_reference"></a> [key\_vault\_reference](#input\_key\_vault\_reference)
+
+Description: A key\_vault\_reference block that describes the Azure KeyVault reference to use when deploying the Azure Batch account using the UserSubscription pool allocation mode.
+
+- `id` - (Required) The Azure identifier of the Azure KeyVault to use.
+- `url` - (Required) The HTTPS URL of the Azure KeyVault to use.
+
+Type:
+
+```hcl
+object({
+    id  = string
+    url = string
+  })
+```
+
+Default: `null`
 
 ### <a name="input_lock"></a> [lock](#input\_lock)
 
@@ -272,6 +312,14 @@ Description: Specifies the storage account authentication mode
 Type: `string`
 
 Default: `"StorageKeys"`
+
+### <a name="input_storage_account_node_identity"></a> [storage\_account\_node\_identity](#input\_storage\_account\_node\_identity)
+
+Description: Specifies the user assigned identity for the storage account.
+
+Type: `string`
+
+Default: `null`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 

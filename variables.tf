@@ -1,3 +1,5 @@
+# Add these new variables:
+
 variable "location" {
   type        = string
   description = "Specifies the Azure location where the resource exists."
@@ -24,6 +26,17 @@ variable "storage_account_id" {
   description = "Specifies the storage account to use for the Batch account"
 }
 
+variable "allowed_authentication_modes" {
+  type        = list(string)
+  default     = null
+  description = "Specifies the allowed authentication mode for the Batch account. Possible values include AAD, SharedKey or TaskAuthenticationToken."
+
+  validation {
+    condition     = var.allowed_authentication_modes == null ? true : length([for mode in var.allowed_authentication_modes : true if contains(["AAD", "SharedKey", "TaskAuthenticationToken"], mode)]) == length(var.allowed_authentication_modes)
+    error_message = "allowed_authentication_modes must be one of 'AAD', 'SharedKey', or 'TaskAuthenticationToken'."
+  }
+}
+
 variable "enable_telemetry" {
   type        = bool
   default     = true
@@ -34,10 +47,32 @@ If it is set to false, then no telemetry will be collected.
 DESCRIPTION
 }
 
+variable "encryption" {
+  type = object({
+    key_vault_key_id = string
+  })
+  default     = null
+  description = "Specifies if customer managed key encryption should be used to encrypt batch account data."
+}
+
 variable "identity" {
   type        = list(map(any))
   default     = []
   description = "Managed Service Identity that should be configured on this Batch Account."
+}
+
+variable "key_vault_reference" {
+  type = object({
+    id  = string
+    url = string
+  })
+  default     = null
+  description = <<DESCRIPTION
+A key_vault_reference block that describes the Azure KeyVault reference to use when deploying the Azure Batch account using the UserSubscription pool allocation mode.
+  
+- `id` - (Required) The Azure identifier of the Azure KeyVault to use.
+- `url` - (Required) The HTTPS URL of the Azure KeyVault to use.
+DESCRIPTION
 }
 
 variable "lock" {
@@ -194,6 +229,12 @@ variable "storage_account_authentication_mode" {
   type        = string
   default     = "StorageKeys"
   description = "Specifies the storage account authentication mode"
+}
+
+variable "storage_account_node_identity" {
+  type        = string
+  default     = null
+  description = "Specifies the user assigned identity for the storage account."
 }
 
 variable "tags" {
