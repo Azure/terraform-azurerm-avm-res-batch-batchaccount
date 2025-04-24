@@ -1,17 +1,13 @@
 terraform {
-  required_version = "~> 1.11.4"
+  required_version = ">= 1.7.0"
   required_providers {
     azapi = {
       source  = "Azure/azapi"
-      version = "~> 1.9"
+      version = ">= 1.14.0, < 3.0.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.74.0, < 4.0.0"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.4"
+      version = ">= 3.116.0, < 5.0.0"
     }
     modtm = {
       source  = "Azure/modtm"
@@ -19,11 +15,7 @@ terraform {
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.6"
-    }
-    time = {
-      source  = "hashicorp/time"
-      version = "~> 0.9"
+      version = ">= 3.5.0, < 4.0.0"
     }
   }
 }
