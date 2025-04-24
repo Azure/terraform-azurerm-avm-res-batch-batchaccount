@@ -1,3 +1,3 @@
 # Default example
 
-This example shows how to deploy the module in its simplest configuration.
+This deploys the module in its simplest form.
