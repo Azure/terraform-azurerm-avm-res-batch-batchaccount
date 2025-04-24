@@ -85,7 +85,7 @@ module "azure_batch_account" {
   location                            = azurerm_resource_group.this.location
   pool_allocation_mode                = "BatchService"
   public_network_access_enabled       = true
-  storage_account_id                  = module.avm_res_storage_storageaccount.id
+  storage_account_id                  = module.avm_res_storage_storageaccount.resource.id
   storage_account_authentication_mode = "StorageKeys" # or "BatchAccountManagedIdentity"
 }
 ```
