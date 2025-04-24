@@ -61,7 +61,7 @@ module "avm_res_storage_storageaccount" {
     bypass         = ["AzureServices"]
     default_action = "Allow"
   }
-  account_replication_type = "LRS"
+  account_replication_type = "ZRS"
 }
 
 
