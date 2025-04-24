@@ -62,6 +62,7 @@ module "avm_res_storage_storageaccount" {
     default_action = "Allow"
   }
   account_replication_type = "ZRS"
+  tags                     = {}
 }
 
 
@@ -81,4 +82,5 @@ module "azure_batch_account" {
   public_network_access_enabled       = true
   storage_account_id                  = module.avm_res_storage_storageaccount.resource.id
   storage_account_authentication_mode = "StorageKeys" # or "BatchAccountManagedIdentity"
+  tags                                = {}
 }
