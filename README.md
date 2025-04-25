@@ -117,7 +117,14 @@ Default: `null`
 
 Description: Managed Service Identity that should be configured on this Batch Account.
 
-Type: `list(map(any))`
+Type:
+
+```hcl
+list(object({
+    type         = string
+    identity_ids = optional(set(string), []) # Optional with default empty set
+  }))
+```
 
 Default: `[]`
 

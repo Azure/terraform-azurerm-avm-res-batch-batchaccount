@@ -57,18 +57,11 @@ module "avm_res_storage_storageaccount" {
   location                      = azurerm_resource_group.this.location
   shared_access_key_enabled     = true
   public_network_access_enabled = true
-  network_rules = {
-    bypass                     = ["AzureServices"]
-    default_action             = "Allow"
-    ip_rules                   = []
-    virtual_network_subnet_ids = []
-  }
-  account_replication_type = "ZRS"
+  account_replication_type      = "ZRS"
   tags = {
     "environment" = "test"
   }
 }
-
 
 # This is the module call
 # Do not specify location here due to the randomization above.
@@ -77,16 +70,24 @@ module "avm_res_storage_storageaccount" {
 # Assuming the module is two levels up in the directory structure
 module "azure_batch_account" {
   source = "../.."
-  # source             = "Azure/avm-res-res-batch-batchaccount/azurerm"
-  # version            = "0.1.0"
+
+  # Basic configuration
   name                                = module.naming.batch_account.name_unique
   resource_group_name                 = azurerm_resource_group.this.name
   location                            = azurerm_resource_group.this.location
   pool_allocation_mode                = "BatchService"
   public_network_access_enabled       = true
   storage_account_id                  = module.avm_res_storage_storageaccount.resource.id
-  storage_account_authentication_mode = "StorageKeys" # or "BatchAccountManagedIdentity"
+  storage_account_authentication_mode = "StorageKeys"
+
+  # Add system identity to access the key
+  identity = [
+    {
+      type = "SystemAssigned"
+    }
+  ]
+
   tags = {
-    "environment" = "test" # Add the same tags as the storage account
+    "environment" = "test"
   }
 }

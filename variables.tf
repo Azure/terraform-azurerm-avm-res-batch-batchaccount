@@ -56,7 +56,10 @@ variable "encryption" {
 }
 
 variable "identity" {
-  type        = list(map(any))
+  type = list(object({
+    type         = string
+    identity_ids = optional(set(string), []) # Optional with default empty set
+  }))
   default     = []
   description = "Managed Service Identity that should be configured on this Batch Account."
 }
