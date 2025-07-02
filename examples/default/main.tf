@@ -1,5 +1,6 @@
 terraform {
   required_version = "~> 1.11.4"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -51,13 +52,13 @@ module "avm_res_storage_storageaccount" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
   version = "0.6.0"
 
-  enable_telemetry              = var.enable_telemetry
+  location                      = azurerm_resource_group.this.location
   name                          = module.naming.storage_account.name_unique
   resource_group_name           = azurerm_resource_group.this.name
-  location                      = azurerm_resource_group.this.location
-  shared_access_key_enabled     = true
-  public_network_access_enabled = true
   account_replication_type      = "ZRS"
+  enable_telemetry              = var.enable_telemetry
+  public_network_access_enabled = true
+  shared_access_key_enabled     = true
   tags = {
     "environment" = "test"
   }
@@ -71,22 +72,20 @@ module "avm_res_storage_storageaccount" {
 module "azure_batch_account" {
   source = "../.."
 
+  location = azurerm_resource_group.this.location
   # Basic configuration
-  name                                = module.naming.batch_account.name_unique
-  resource_group_name                 = azurerm_resource_group.this.name
-  location                            = azurerm_resource_group.this.location
-  pool_allocation_mode                = "BatchService"
-  public_network_access_enabled       = true
-  storage_account_id                  = module.avm_res_storage_storageaccount.resource.id
-  storage_account_authentication_mode = "StorageKeys"
-
+  name                = module.naming.batch_account.name_unique
+  resource_group_name = azurerm_resource_group.this.name
+  storage_account_id  = module.avm_res_storage_storageaccount.resource.id
   # Add system identity to access the key
   identity = [
     {
       type = "SystemAssigned"
     }
   ]
-
+  pool_allocation_mode                = "BatchService"
+  public_network_access_enabled       = true
+  storage_account_authentication_mode = "StorageKeys"
   tags = {
     "environment" = "test"
   }
