@@ -23,16 +23,10 @@ resource "azurerm_role_assignment" "this" {
 
 # Azure Batch Account Resource
 resource "azurerm_batch_account" "this" {
-  location                            = var.location
-  name                                = var.name
-  resource_group_name                 = var.resource_group_name
-  allowed_authentication_modes        = var.allowed_authentication_modes
-  pool_allocation_mode                = var.pool_allocation_mode
-  public_network_access_enabled       = var.public_network_access_enabled
-  storage_account_authentication_mode = var.storage_account_authentication_mode
-  storage_account_id                  = var.storage_account_id
-  storage_account_node_identity       = var.storage_account_node_identity
-  tags                                = var.tags != null ? var.tags : {}
+  location                     = var.location
+  name                         = var.name
+  resource_group_name          = var.resource_group_name
+  allowed_authentication_modes = var.allowed_authentication_modes
 
   # Dynamic block for encryption
   dynamic "encryption" {
@@ -42,6 +36,13 @@ resource "azurerm_batch_account" "this" {
       key_vault_key_id = encryption.value.key_vault_key_id
     }
   }
+  pool_allocation_mode                = var.pool_allocation_mode
+  public_network_access_enabled       = var.public_network_access_enabled
+  storage_account_authentication_mode = var.storage_account_authentication_mode
+  storage_account_id                  = var.storage_account_id
+  storage_account_node_identity       = var.storage_account_node_identity
+  tags                                = var.tags != null ? var.tags : {}
+
   # Dynamic block for identity
   dynamic "identity" {
     for_each = var.identity
@@ -51,6 +52,7 @@ resource "azurerm_batch_account" "this" {
       identity_ids = identity.value.identity_ids
     }
   }
+
   # Dynamic block for key_vault_reference (required when pool_allocation_mode = "UserSubscription")
   dynamic "key_vault_reference" {
     for_each = var.key_vault_reference != null ? [var.key_vault_reference] : []
@@ -60,6 +62,7 @@ resource "azurerm_batch_account" "this" {
       url = key_vault_reference.value.url
     }
   }
+
   # Dynamic block for network_profile
   dynamic "network_profile" {
     for_each = var.network_profile

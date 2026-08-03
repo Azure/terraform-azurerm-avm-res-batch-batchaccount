@@ -6,11 +6,11 @@ This deploys the module in its simplest form.
 
 ```hcl
 terraform {
-  required_version = "~> 1.11.4"
+  required_version = ">= 1.11.4, < 2.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.116.0, < 5.0.0"
+      version = ">= 3.116.0, < 5.0.2"
     }
     random = {
       source  = "hashicorp/random"
@@ -56,14 +56,14 @@ resource "azurerm_resource_group" "this" {
 
 module "avm_res_storage_storageaccount" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.6.0"
+  version = "0.7.3"
 
   enable_telemetry              = var.enable_telemetry
   name                          = module.naming.storage_account.name_unique
-  resource_group_name           = azurerm_resource_group.this.name
+  parent_id                     = azurerm_resource_group.this.id
   location                      = azurerm_resource_group.this.location
-  shared_access_key_enabled     = true
-  public_network_access_enabled = true
+  shared_access_key_enabled     = false
+  public_network_access_enabled = false
   account_replication_type      = "ZRS"
   tags = {
     "environment" = "test"
@@ -85,7 +85,7 @@ module "azure_batch_account" {
   pool_allocation_mode                = "BatchService"
   public_network_access_enabled       = true
   storage_account_id                  = module.avm_res_storage_storageaccount.resource.id
-  storage_account_authentication_mode = "StorageKeys"
+  storage_account_authentication_mode = "BatchAccountManagedIdentity"
 
   # Add system identity to access the key
   identity = [
@@ -105,9 +105,9 @@ module "azure_batch_account" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11.4)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.11.4, < 2.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.116.0, < 5.0.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.116.0, < 5.0.2)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
@@ -149,7 +149,7 @@ The following Modules are called:
 
 Source: Azure/avm-res-storage-storageaccount/azurerm
 
-Version: 0.6.0
+Version: 0.7.3
 
 ### <a name="module_azure_batch_account"></a> [azure\_batch\_account](#module\_azure\_batch\_account)
 
