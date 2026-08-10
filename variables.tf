@@ -1,5 +1,6 @@
 # Add these new variables:
 
+
 variable "location" {
   type        = string
   description = "Specifies the Azure location where the resource exists."
