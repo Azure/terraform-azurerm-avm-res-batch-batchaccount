@@ -56,7 +56,7 @@ resource "azurerm_resource_group" "this" {
 
 module "avm_res_storage_storageaccount" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.6.0"
+  version = "0.7.3"
 
   enable_telemetry              = var.enable_telemetry
   name                          = module.naming.storage_account.name_unique
@@ -149,7 +149,7 @@ The following Modules are called:
 
 Source: Azure/avm-res-storage-storageaccount/azurerm
 
-Version: 0.6.0
+Version: 0.7.3
 
 ### <a name="module_azure_batch_account"></a> [azure\_batch\_account](#module\_azure\_batch\_account)
 
