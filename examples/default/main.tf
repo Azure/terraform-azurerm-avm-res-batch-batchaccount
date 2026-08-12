@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.116.0, < 5.0.0"
+      version = ">= 3.116.0, < 5.0.2"
     }
     random = {
       source  = "hashicorp/random"
@@ -49,7 +49,7 @@ resource "azurerm_resource_group" "this" {
 
 module "avm_res_storage_storageaccount" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.7.3"
+  version = "0.7.4"
 
   enable_telemetry              = var.enable_telemetry
   name                          = module.naming.storage_account.name_unique
