@@ -10,7 +10,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.116.0, < 5.0.0"
+      version = ">= 3.116.0, < 5.0.2"
     }
     random = {
       source  = "hashicorp/random"
@@ -56,7 +56,7 @@ resource "azurerm_resource_group" "this" {
 
 module "avm_res_storage_storageaccount" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.7.3"
+  version = "0.7.4"
 
   enable_telemetry              = var.enable_telemetry
   name                          = module.naming.storage_account.name_unique
@@ -107,7 +107,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11.4)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.116.0, < 5.0.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.116.0, < 5.0.2)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
@@ -149,7 +149,7 @@ The following Modules are called:
 
 Source: Azure/avm-res-storage-storageaccount/azurerm
 
-Version: 0.7.3
+Version: 0.7.4
 
 ### <a name="module_azure_batch_account"></a> [azure\_batch\_account](#module\_azure\_batch\_account)
 
