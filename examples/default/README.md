@@ -7,6 +7,7 @@ This deploys the module in its simplest form.
 ```hcl
 terraform {
   required_version = ">= 1.11.4, < 2.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -29,7 +30,6 @@ provider "azurerm" {
   }
 }
 
-
 ## Section to provide a random Azure region for the resource group
 # This allows us to randomize the region for the resource group.
 module "regions" {
@@ -42,6 +42,7 @@ resource "random_integer" "region_index" {
   max = length(module.regions.regions) - 1
   min = 0
 }
+
 ## End of section to provide a random Azure region for the resource group
 
 # This ensures we have unique CAF compliant names for our resources.
@@ -60,13 +61,13 @@ module "avm_res_storage_storageaccount" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
   version = "0.7.3"
 
-  enable_telemetry              = var.enable_telemetry
+  location                      = azurerm_resource_group.this.location
   name                          = module.naming.storage_account.name_unique
   parent_id                     = azurerm_resource_group.this.id
-  location                      = azurerm_resource_group.this.location
-  shared_access_key_enabled     = false
-  public_network_access_enabled = false
   account_replication_type      = "ZRS"
+  enable_telemetry              = var.enable_telemetry
+  public_network_access_enabled = false
+  shared_access_key_enabled     = false
   tags = {
     "environment" = "test"
   }
@@ -80,22 +81,20 @@ module "avm_res_storage_storageaccount" {
 module "azure_batch_account" {
   source = "../.."
 
+  location = azurerm_resource_group.this.location
   # Basic configuration
-  name                                = module.naming.batch_account.name_unique
-  resource_group_name                 = azurerm_resource_group.this.name
-  location                            = azurerm_resource_group.this.location
-  pool_allocation_mode                = "BatchService"
-  public_network_access_enabled       = true
-  storage_account_id                  = module.avm_res_storage_storageaccount.resource.id
-  storage_account_authentication_mode = "BatchAccountManagedIdentity"
-
+  name                = module.naming.batch_account.name_unique
+  resource_group_name = azurerm_resource_group.this.name
+  storage_account_id  = module.avm_res_storage_storageaccount.resource.id
   # Add system identity to access the key
   identity = [
     {
       type = "SystemAssigned"
     }
   ]
-
+  pool_allocation_mode                = "BatchService"
+  public_network_access_enabled       = true
+  storage_account_authentication_mode = "BatchAccountManagedIdentity"
   tags = {
     "environment" = "test"
   }
