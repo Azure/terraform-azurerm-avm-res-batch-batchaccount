@@ -65,7 +65,7 @@ module "avm_res_storage_storageaccount" {
   name                          = module.naming.storage_account.name_unique
   parent_id                     = azurerm_resource_group.this.id
   account_replication_type      = "ZRS"
-  enable_telemetry              = false
+  enable_telemetry              = var.enable_telemetry
   public_network_access_enabled = false
   shared_access_key_enabled     = false
   tags = {
@@ -86,7 +86,7 @@ module "azure_batch_account" {
   name                = module.naming.batch_account.name_unique
   resource_group_name = azurerm_resource_group.this.name
   storage_account_id  = module.avm_res_storage_storageaccount.resource.id
-  enable_telemetry    = false
+  enable_telemetry    = var.enable_telemetry
   # Add system identity to access the key
   identity = [
     {
@@ -137,7 +137,7 @@ If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ## Outputs
 
