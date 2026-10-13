@@ -28,20 +28,40 @@ Endpoints inherit the account lock when no endpoint lock is supplied. Use `lock 
 ## Upgrade notes
 
 > [!WARNING]
-> This is a breaking upgrade. Legacy duplicate endpoint ownership must be reviewed before applying it; fresh-deployment tests do not establish a state-safe upgrade.
+> This is a breaking upgrade. Resolve any legacy duplicate endpoint ownership before applying it. Fresh mocked tests do not prove a safe upgrade of an existing deployment's state.
 
 This module requires AzureRM v4 and Terraform 1.9 or later. The Batch account and existing endpoint resource addresses are unchanged. Correcting a previously ignored service or IP member can replace the affected endpoint. The full `resource` output is sensitive because it includes Batch access keys.
 
-With `private_endpoints_manage_dns_zone_group = false`, legacy deployments can record both addresses for the same map key:
+### DNS-off duplicate endpoint ownership
 
-- `azurerm_private_endpoint.this_managed_dns_zone_groups["<key>"]`
-- `azurerm_private_endpoint.this_unmanaged_dns_zone_groups["<key>"]`
+An existing deployment is affected by this issue only when `private_endpoints_manage_dns_zone_group = false` and **both** managed/unmanaged state addresses for the same endpoint key exist and have the **same Azure endpoint ID**. A single binding or two different IDs does not meet this condition; do not use the state-removal procedure below in those cases.
 
-The duplicate-owner condition is:
+For a caller named `module.azure_batch_account` (as in the default example) and endpoint key `account`, the affected addresses are:
 
-```text
-azurerm_private_endpoint.this_managed_dns_zone_groups["<key>"].id
-  == azurerm_private_endpoint.this_unmanaged_dns_zone_groups["<key>"].id
-```
+- `module.azure_batch_account.azurerm_private_endpoint.this_managed_dns_zone_groups["account"]`
+- `module.azure_batch_account.azurerm_private_endpoint.this_unmanaged_dns_zone_groups["account"]`
 
-The corrected DNS-off behavior creates only the unmanaged endpoint. If both legacy addresses own the same Azure resource ID, removing the managed address can delete the shared endpoint even while the unmanaged address remains. Do not apply the upgrade until this ownership has been reconciled and the upgrade risk acknowledged. Both address labels and DNS lifecycle modes are retained; this module does not perform automatic state moves, removal or deletion to reconcile legacy ownership.
+The duplicate-owner condition is equality of the `id` fields recorded at these two addresses. Substitute your exact caller module path and endpoint key; if the module is used as the root configuration, omit `module.azure_batch_account.`.
+
+The corrected DNS-off behavior retains only the unmanaged endpoint. An upgrade plan can therefore destroy the duplicate managed owner, deleting the shared Azure endpoint even though the unmanaged state binding remains. Both address labels and DNS lifecycle modes are retained; the module does not automatically reconcile existing state.
+
+Before applying the upgrade, the deployment owner must perform this manual prerequisite:
+
+1. Stop concurrent Terraform runs and confirm the correct backend/workspace. Securely back up the current state outside the repository using an access-restricted or encrypted location; state can contain secrets. Confirm that the backup can be restored.
+1. Inspect only the two exact endpoint instances and verify their IDs are identical. Confirm that the unmanaged binding is the intended retained endpoint and that the corrected configuration still uses the same key with DNS management disabled. In PowerShell 7.4 or later, the example inspections are:
+
+   ```powershell
+   terraform state show 'module.azure_batch_account.azurerm_private_endpoint.this_managed_dns_zone_groups["account"]'
+   terraform state show 'module.azure_batch_account.azurerm_private_endpoint.this_unmanaged_dns_zone_groups["account"]'
+   ```
+
+1. **Only if those checks confirm duplicate ownership**, preview removal and confirm that it selects only the duplicate managed instance. Then remove that one managed **state binding**, not the Azure endpoint. Leave the unmanaged binding unchanged:
+
+   ```powershell
+   terraform state rm -dry-run 'module.azure_batch_account.azurerm_private_endpoint.this_managed_dns_zone_groups["account"]'
+   terraform state rm 'module.azure_batch_account.azurerm_private_endpoint.this_managed_dns_zone_groups["account"]'
+   ```
+
+1. Rerun `terraform plan` against the corrected configuration and review it before any apply. **Do not apply any unexpected endpoint deletion or recreation**, including replacements caused by corrected service/IP settings; stop and resolve the discrepancy first.
+
+[`terraform state rm`](https://developer.hashicorp.com/terraform/cli/commands/state/rm) forgets only the selected binding without deleting the remote object. Never use a whole-module/resource address, wildcard, or blanket removal for this prerequisite, and do not apply the old configuration after forgetting its managed binding. These are conditional operator instructions, not an automatic migration or a guarantee that an existing-state upgrade is safe.
