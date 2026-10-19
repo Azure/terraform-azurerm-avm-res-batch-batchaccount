@@ -2,9 +2,17 @@ terraform {
   required_version = ">= 1.11.4, < 2.0"
 
   required_providers {
+    azapi = {
+      source  = "Azure/azapi"
+      version = "~> 2.12"
+    }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
+    }
+    modtm = {
+      source  = "registry.terraform.io/azure/modtm"
+      version = "~> 0.3"
     }
     random = {
       source  = "hashicorp/random"
@@ -40,8 +48,8 @@ resource "random_integer" "region_index" {
 
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
-  source  = "Azure/naming/azurerm"
-  version = "0.4.4"
+  source  = "Azure/avm-utl-naming/azure"
+  version = "0.2.0"
 }
 
 # This is required for resource modules
@@ -51,8 +59,9 @@ resource "azurerm_resource_group" "this" {
 }
 
 module "avm_res_storage_storageaccount" {
-  source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.10.0"
+  source    = "Azure/avm-res-storage-storageaccount/azurerm"
+  version   = "0.10.0"
+  providers = { modtm = modtm }
 
   location                      = azurerm_resource_group.this.location
   name                          = module.naming.storage_account.name_unique
@@ -73,6 +82,9 @@ module "avm_res_storage_storageaccount" {
 # Assuming the module is two levels up in the directory structure
 module "azure_batch_account" {
   source = "../.."
+  providers = {
+    azapi = azapi
+  }
 
   location = azurerm_resource_group.this.location
   # Basic configuration
