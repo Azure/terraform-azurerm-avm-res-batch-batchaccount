@@ -2,6 +2,7 @@ terraform {
   required_version = ">= 1.11.4, < 2.0"
 
   required_providers {
+    # tflint-ignore: terraform_unused_required_providers
     azapi = {
       source  = "Azure/azapi"
       version = "~> 2.12"
@@ -10,6 +11,7 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    # tflint-ignore: terraform_unused_required_providers
     modtm = {
       source  = "registry.terraform.io/azure/modtm"
       version = "~> 0.3"
@@ -59,9 +61,8 @@ resource "azurerm_resource_group" "this" {
 }
 
 module "avm_res_storage_storageaccount" {
-  source    = "Azure/avm-res-storage-storageaccount/azurerm"
-  version   = "0.10.0"
-  providers = { modtm = modtm }
+  source  = "Azure/avm-res-storage-storageaccount/azurerm"
+  version = "0.10.0"
 
   location                      = azurerm_resource_group.this.location
   name                          = module.naming.storage_account.name_unique
@@ -82,9 +83,6 @@ module "avm_res_storage_storageaccount" {
 # Assuming the module is two levels up in the directory structure
 module "azure_batch_account" {
   source = "../.."
-  providers = {
-    azapi = azapi
-  }
 
   location = azurerm_resource_group.this.location
   # Basic configuration

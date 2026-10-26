@@ -31,15 +31,6 @@ mock_provider "azapi" {
   }
 }
 
-mock_provider "modtm" {
-  mock_data "modtm_module_source" {
-    defaults = {
-      module_source  = "registry.terraform.io/Azure/avm-res-batch-batchaccount/azurerm"
-      module_version = "0.1.0"
-    }
-  }
-}
-
 mock_provider "random" {
   mock_resource "random_uuid" {
     defaults = {
@@ -72,6 +63,11 @@ run "no_private_endpoints" {
     )
     error_message = "An empty interface must not create endpoints, locks or roles."
   }
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "telemetry_uses_mocked_providers" {
@@ -80,8 +76,13 @@ run "telemetry_uses_mocked_providers" {
     enable_telemetry = true
   }
   assert {
-    condition     = length(modtm_telemetry.telemetry) == 1
+    condition     = length(azapi_resource.telemetry) == 1
     error_message = "Enabled telemetry must remain testable without collector access."
+  }
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
   }
 }
 
@@ -134,6 +135,11 @@ run "managed_defaults" {
       output.resource_private_endpoints["account"].id == azurerm_private_endpoint.this_managed_dns_zone_groups["account"].id
     )
     error_message = "Omitted DNS zones must stay absent and the endpoint output must retain the caller key."
+  }
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
   }
 }
 
@@ -264,6 +270,11 @@ run "managed_overrides_locks_and_roles" {
     )
     error_message = "Retry and timeouts must reach both AzAPI extension resources."
   }
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "unmanaged_dns_endpoint" {
@@ -327,6 +338,11 @@ run "unmanaged_dns_endpoint" {
     )
     error_message = "Locks, roles and application security groups must attach to the selected unmanaged endpoint."
   }
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "inherit_lock_and_opt_out" {
@@ -361,6 +377,11 @@ run "inherit_lock_and_opt_out" {
     )
     error_message = "Endpoints must inherit the account lock and notes unless explicitly opted out."
   }
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "account_role_settings" {
@@ -387,6 +408,11 @@ run "account_role_settings" {
     )
     error_message = "The shared role interface must retain name, description, principal type and account scope."
   }
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "invalid_subnet" {
@@ -397,6 +423,11 @@ run "invalid_subnet" {
     }
   }
   expect_failures = [var.private_endpoints]
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "invalid_dns_zone" {
@@ -410,6 +441,11 @@ run "invalid_dns_zone" {
     }
   }
   expect_failures = [var.private_endpoints]
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "invalid_application_security_group" {
@@ -423,6 +459,11 @@ run "invalid_application_security_group" {
     }
   }
   expect_failures = [var.private_endpoints]
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "invalid_delegated_identity" {
@@ -442,6 +483,11 @@ run "invalid_delegated_identity" {
     }
   }
   expect_failures = [var.private_endpoints]
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "invalid_service" {
@@ -455,6 +501,11 @@ run "invalid_service" {
     }
   }
   expect_failures = [var.private_endpoints]
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "invalid_lock" {
@@ -468,6 +519,11 @@ run "invalid_lock" {
     }
   }
   expect_failures = [var.private_endpoints]
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
 
 run "invalid_skip_principal_type" {
@@ -488,4 +544,9 @@ run "invalid_skip_principal_type" {
     }
   }
   expect_failures = [var.private_endpoints]
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+    random  = random
+  }
 }
