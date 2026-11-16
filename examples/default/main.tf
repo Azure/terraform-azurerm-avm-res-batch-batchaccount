@@ -41,7 +41,7 @@ resource "random_integer" "region_index" {
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/avm-utl-naming/azure"
-  version = "0.2.0"
+  version = "0.3.0"
 }
 
 # This is required for resource modules
@@ -52,7 +52,7 @@ resource "azurerm_resource_group" "this" {
 
 module "avm_res_storage_storageaccount" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
-  version = "0.10.0"
+  version = "0.11.0"
 
   location                      = azurerm_resource_group.this.location
   name                          = module.naming.storage_account.name_unique
