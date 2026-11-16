@@ -80,8 +80,8 @@ module "avm_interfaces" {
   source  = "Azure/avm-utl-interfaces/azure"
   version = "0.10.0"
 
-  location                         = var.location
   enable_telemetry                 = var.enable_telemetry
+  location                         = var.location
   private_endpoints                = local.private_endpoint_interfaces
   private_endpoints_scope          = azurerm_batch_account.this.id
   role_assignment_definition_scope = azurerm_batch_account.this.id
